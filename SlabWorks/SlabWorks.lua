@@ -646,6 +646,7 @@ function OnLuaButton_BitZBtn(dialog)
   dialog:UpdateDoubleField("BitDia", xbit_dia)
   dialog:UpdateDoubleField("Stepover", xstepover)
   dialog:UpdateDoubleField("FeedRate", 250)
+  dialog:UpdateDoubleField("SpindleRPM", 14400)
   return true  -- ESSENTIAL that handler has this at end (don't just return)
 end;
 
