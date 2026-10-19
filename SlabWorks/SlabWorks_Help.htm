@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slabworks Help</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+        .parameter {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-left: 4px solid #3498db;
+            border-radius: 4px;
+        }
+        .parameter-name {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        .parameter-description {
+            color: #555;
+            margin-left: 10px;
+        }
+        .section {
+            margin-top: 30px;
+        }
+        ul {
+            margin-left: 20px;
+        }
+        li {
+            margin-bottom: 5px;
+        }
+        .note {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 10px 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .option-list {
+            margin-left: 30px;
+            color: #555;
+        }
+        .footer {
+            margin-top: 12px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #999;
+        }
+        .footer a {
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>SlabWorks Help
+            <!-- gear image from Vectric's standard gadget header template -->
+            <img src="data:image/png;base64,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" width="51" height="46" alt="">
+        </h1>
+        
+        <div class="note">
+            <strong>Important:</strong> SlabWorks creates raw toolpaths and does not utilize any vectors in the drawing. You cannot edit the toolpaths once created. If you need to modify them, you should delete and recreate the toolpaths with your new settings.
+        </div>
+        
+        <div class="section">
+            <h2>Slab Dimensions</h2>
+            
+            <div class="parameter">
+                <div class="parameter-name">Slab Width</div>
+                <div class="parameter-description">The width of the workpiece in inches.</div>
+            </div>
+            
+            <div class="parameter">
+                <div class="parameter-name">Slab Height</div>
+                <div class="parameter-description">The height of the workpiece in inches.</div>
+            </div>
+            
+            <div class="parameter">
+                <div class="parameter-name">Slab Thickness</div>
+                <div class="parameter-description">The thickness of the workpiece material in inches.</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Tool Settings</h2>
+            
+            <div class="note">
+                <strong>Quick Tool Presets:</strong> Use the preset buttons to automatically populate tool settings for common bits:
+                <ul style="margin-top: 8px; margin-bottom: 0;">
+                    <li><strong>6210</strong> - Whiteside, 1" diameter, ¼" shank, 3 flutes</li>
+                    <li><strong>6220</strong> - Whiteside, 2" diameter, ½" shank, 4 flutes</li>
+                    <li><strong>RC2255</strong> - Amana, 2" diameter, ½" shank, 3 flutes</li>
+                </ul>
+            </div>
+            
+            <div class="parameter">
+                <div class="parameter-name">Bit Diameter</div>
+                <div class="parameter-description">The diameter of your cutting bit in inches. This affects the toolpath calculations and stepover distance.</div>
+            </div>
+            
+            <div class="parameter">
+                <div class="parameter-name">Spindle RPM</div>
+                <div class="parameter-description">The rotational speed of the spindle in revolutions per minute.</div>
+            </div>
+            
+            <div class="parameter">
+                <div class="parameter-name">Stepover</div>
+                <div class="parameter-description">The lateral distance between adjacent toolpath passes in inches, typically expressed as a percentage of bit diameter or actual distance.</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Toolpath Configuration</h2>
+            
+            <div class="parameter">
+                <div class="parameter-name">Toolpath Type</div>
+                <div class="parameter-description">Select the pattern for material removal:</div>
+                <div class="option-list">
+                    <ul>
+                        <li><strong>Linear Y</strong> - Straight passes along the Y axis</li>
+                        <li><strong>Linear X</strong> - Straight passes along the X axis</li>
+                        <li><strong>Climb Only</strong> - Unidirectional cutting in the optimal climb direction</li>
+                        <li><strong>Spiral</strong> - Rectangular spiral pattern from outside to center</li>
+                        <li><strong>True Spiral</strong> - Continuous curved spiral pattern</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="parameter">
+                <div class="parameter-name">Perimeter Cut First</div>
+                <div class="parameter-description">When enabled, the outer perimeter is cut before the internal toolpaths. This can help define workpiece boundaries and reduce tear-out.</div>
+                <div class="note" style="margin-top: 10px; margin-bottom: 0;">
+                    <strong>Note:</strong> Only applies to Linear X and Y toolpath types.
+                </div>
+            </div>
+            
+            <div class="parameter">
+                <div class="parameter-name">Alternate Tool Number to Force Tool Change Stop</div>
+                <div class="parameter-description">When enabled, inserts a tool change command to pause the machine, allowing for inspection of the workpiece during the cutting operation.</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Cutting Parameters</h2>
+            
+            <div class="parameter">
+                <div class="parameter-name">Repeat</div>
+                <div class="parameter-description">Number of times to repeat the cutting pass. This value is automatically calculated based on Depth ÷ Cut Depth, or you can enter it directly to update the Depth value.</div>
+            </div>
+            
+            <div class="parameter">
+                <div class="parameter-name">Depth</div>
+                <div class="parameter-description">The total depth of the cut operation in inches. This equals Repeat × Cut Depth and updates automatically when either value changes.</div>
+            </div>
+            
+            <div class="parameter">
+                <div class="parameter-name">Depth Offset</div>
+                <div class="parameter-description">Starting depth offset from the workpiece surface in inches. Use this to account for material already removed in a previous run, avoiding cutting air. This value defaults to the Depth from the previous run.</div>
+            </div>
+            
+            <div class="parameter">
+                <div class="parameter-name">Cut Depth</div>
+                <div class="parameter-description">The depth of material removed in each pass in inches. Multiple passes will be generated if this is less than the total depth.</div>
+            </div>
+            
+            <div class="parameter">
+                <div class="parameter-name">Feedrate</div>
+                <div class="parameter-description">The speed at which the cutting tool moves through the material in inches per minute.</div>
+            </div>
+            
+            <div class="parameter">
+                <div class="parameter-name">Home Height</div>
+                <div class="parameter-description">The height in inches above the workpiece where program will start and end.</div>
+            </div>
+        </div>
+        
+        <div class="note">
+            <strong>Important:</strong> Before running your toolpath, ensure your work coordinate system home is set to the lower left of your workpiece with Z-zero at the top surface.
+        </div>
+    </div>
+    <div class="footer">
+        &copy; 2025-2026 Bill Florac &middot; Licensed under the <a href="LICENSE.txt">MIT License</a>
+    </div>
+</body>
+</html>

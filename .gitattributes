@@ -1,0 +1,6 @@
+# Vectric gadgets run on Windows; keep CRLF line endings in every checkout.
+* text=auto eol=crlf
+
+*.png binary
+*.jpg binary
+*.zip binary

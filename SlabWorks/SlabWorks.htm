@@ -1,0 +1,416 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+    "http://www.w3.org/TR/html4/strict.dtd">
+
+<!-- 
+####################################################################################
+#
+# Standard User Gadget Template 
+#
+# NOTE: This html file includes some embeded images which use VERY long lines.
+#
+# Vectric recommends editors such as Notepad++ for editing these files
+#
+# The 'version' number field will only work correctly once you have deleted 
+# either the "OK/Cancel" OR the ""Apply/Close" block at the bottom of the file.
+#                                                                                   
+#################################################################################### 
+
+overflow: auto;
+-->
+
+<!--
+SlabWorks
+Copyright 2025-2026 Bill Florac
+SPDX-License-Identifier: MIT
+Licensed under the MIT License; see LICENSE.txt in this folder.
+-->
+	
+<html>
+<head>
+<meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+
+
+	<script>
+  function format(num) {
+    fixedString = num.toFixed(6);
+    parsedFloat = parseFloat(fixedString);
+    return parsedFloat;
+  }
+
+    function RepeatOnChange() {
+      var total_depth_e = document.getElementById("TotalDepth");
+      var repeat_count_e = document.getElementById("RepeatCount");
+    
+      var repeat_count = repeat_count_e.value;
+      var cut_depth = document.getElementById("CutDepth").value;
+      var total_depth = total_depth_e.value;
+      
+      if ((!isNaN(repeat_count)) && (repeat_count >= 1) && (repeat_count <= 20)) {
+        var repeat = Math.round(repeat_count);
+        repeat_count_e.value = format(repeat);
+        total_depth_e.value = format(repeat * cut_depth);
+      } else {
+        repeat_count_e.value = format(Math.ceil(total_depth / cut_depth));
+      }
+    }
+    
+    function TotalDepthOnChange() {
+      var repeat_count_e = document.getElementById("RepeatCount");
+      var total_depth_e = document.getElementById("TotalDepth");
+      
+      var total_depth = total_depth_e.value;
+      var cut_depth = document.getElementById("CutDepth").value;
+      var repeat_count = repeat_count_e.value;
+      
+      if ((!isNaN(total_depth)) && (total_depth > 0) && (total_depth <= 6.0)) {
+        var repeat = Math.ceil(total_depth / cut_depth);
+        repeat_count_e.value = format(repeat);
+        total_depth_e.value = format(repeat * cut_depth);
+      } else {
+        // put it back!
+        total_depth_e.value = format(repeat_count * cut_depth);
+      }
+    }
+
+    function CutDepthOnChange() {
+      var total_depth_e = document.getElementById("TotalDepth");
+      var cut_depth_e = document.getElementById("CutDepth");
+      
+      var repeat_count = document.getElementById("RepeatCount").value;
+      var cut_depth = cut_depth_e.value;
+      var total_depth = total_depth_e.value;
+      
+      if ((!isNaN(cut_depth)) && (cut_depth > 0) && (cut_depth <= 1.0)) {
+        total_depth_e.value = format(repeat_count * cut_depth)
+      } else {
+        cut_depth_e.value = format(total_depth / repeat_count);
+      }
+    }
+
+    // Shows the preview image (div ToolpathImageN) matching the checked
+    // ToolpathTypeN radio. Images are embedded base64 PNGs (rendered from the
+    // path-*.svg files) because the dialog can't load files by relative path
+    // and its IE-based engine doesn't render SVG.
+    //  1 = Linear Y, 2 = Linear X, 3 = Climb only, 4 = Spiral, 5 = True Spiral
+    var toolpath_type_count = 5;
+
+    function ToolpathTypeOnChange() {
+      for (var i = 1; i <= toolpath_type_count; i++) {
+        var radio = document.getElementById("ToolpathType" + i);
+        var image = document.getElementById("ToolpathImage" + i);
+        if (!radio || !image) continue;
+        var display = radio.checked ? "block" : "none";
+        if (image.style.display != display) {
+          image.style.display = display;
+        }
+      }
+    }
+
+    // Vectric fills the form before onload, so one call there covers the
+    // initial value. Lua's UpdateRadioIndex (Reset All) sets .checked without
+    // firing click/change, but the dialog's IE engine fires propertychange.
+    function ToolpathTypeOnPropertyChange() {
+      if (window.event && window.event.propertyName == "checked") {
+        ToolpathTypeOnChange();
+      }
+    }
+
+    window.onload = function () {
+      for (var i = 1; i <= toolpath_type_count; i++) {
+        var radio = document.getElementById("ToolpathType" + i);
+        if (radio && radio.attachEvent) {
+          radio.attachEvent("onpropertychange", ToolpathTypeOnPropertyChange);
+        }
+      }
+      ToolpathTypeOnChange();
+    };
+
+
+	</script>
+
+
+
+
+<style type="text/css">
+html {
+  overflow: hidden;
+}
+body {
+	background-color: #F0F0F0; overflow: auto;
+}
+body, td, th {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 0.75rem;
+}
+.FormButton {
+	font-weight: bold;
+	width: 100%;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 0.75rem;
+}
+.h1 {
+	font-size: 0.88rem;
+	font-weight: bold;
+}
+.h2 {
+	font-size: 0.75rem;
+	font-weight: bold;
+}
+.ToolNameLabel {
+	color: #555;
+}
+
+.ParameterDescription {
+	color: #555;
+}
+.Warning {
+	color: #955;
+	font-size: 1.25rem;
+	font-weight: bold;
+	text-align:center
+}
+  
+.xLuaButton {
+	font-weight: bold;
+	width: 100%;
+  font-family: Arial, Helvetica, sans-serif;
+ 	font-size: 0.75rem;
+}
+
+</style>
+<title>Vectric Gadget</title>
+</head>
+<body bgcolor="#efefef">
+
+<!-- 
+####################################################################################
+#
+# Standard Vectric Gadget Header 
+#
+#  use dialog:AddLabelField("GadgetTitle", g_title) in script to set title string 
+#
+#                                                                                   
+#################################################################################### 
+-->
+<table border="0" align="center"  bgcolor="#efefef" cellspacing="0" width="100%"
+>
+  <tr align="center" >
+    <td height="52" align="center" 
+	    style="
+	    background-image:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA5wAAAAyCAYAAAAwTNTSAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAYNJREFUeNrs2kEKwjAQQNFWFMWt4M2K1/N6rtwVBO2YQMBdW6Ei0fdgoKAukmLjB9uIaAAAAGBpK1sAAACA4AQAAEBwAgAAIDgBAABAcAIAACA4AQAAEJwAAAAgOAEAABCcAAAACE4AAAAQnAAAAAhOAAAABCcAAAAITgAAAAQnAAAAghMAAAAEJwAAAIITAAAAwQkAAACCEwAAAMEJAACA4AQAAADBCQAAgOAEAABAcAIAAIDgBAAAQHACAAAgOAEAAEBwAgAAIDgBAAAQnAAAACA4AQAAEJwAAAAITgAAABCcAAAACE4AAAAEJwAAAAhOAAAABCcAAACCEwAAAAQnAAAAghMAAADBCQAAAIITAAAAwQkAAIDgBAAAgJnarju9/6mwcQBftk6zi+kncn69t11Ud5CHu2LVlotb/Aurzj9Yzmm2vgIA1RjS7NMcyvXUey+2bFFt8/qH0OD8BIDx4NyUcWAC1OFRgvNYrsfC6J7m6hn/kbMzu82IfgD4W08BBgBeqSAQmx0J3wAAAABJRU5ErkJggg==');
+		background-position:right; background-repeat:repeat-x; ">
+	   <h1 style = "color: #2E2E30; font-size: 22pt;text-align: left" >
+	      <span id="GadgetTitle">SlabWorks</span>
+		</h1>
+	</td>
+	<td width="170" align="center" 
+	    style="
+		background-image: url(data:image/png;base64,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);
+		
+		background-position:right; background-repeat:repeat-x; ">
+    </td>
+  </tr>
+</table>
+
+<!-- 
+####################################################################################
+#
+# My Stuff
+#
+#                                                                                   
+#################################################################################### 
+-->
+<form>
+<table border="0" width="100%" >
+<tr>
+<td style="width: 40%;"> Slab&nbsp;Width</td>
+<td style="width: 20%;" id="SlabWidth"</td>
+<td style="width: 15%;">&nbsp;</td>
+<td style="width: 25%;"><button title = "Open help page" class="LuaButton" style="width: 100%;" ID="HelpBtn" type=button>Help...</button></td>
+
+</tr>
+<tr>
+<td >Slab&nbsp;Height</td>
+<td id="SlabHeight"></td>
+<td style="width: 15%;">&nbsp;</td>
+<td style="width: 25%;"><button title = "Remove all slap toolpaths" class="LuaButton" style="width: 100%;" ID="ClearBtn" type=button>Clear Toolpaths</button></td>
+
+</tr>
+<tr>
+<td >Slab&nbsp;Thickness</td>
+<td id="SlabThickness"></td>
+<td style="width: 15%;">&nbsp;</td>
+<td style="width: 25%;"><button title = "Resets all parmeters to their default values" class="LuaButton" style="width: 100%;" ID="ResetBtn" type=button>Reset All</button></td>
+
+</tr>
+
+
+<tr>
+	<td colspan=4><hr width="100%"></td>
+</tr>
+<tr>
+<td >Bit&nbsp;Dia.</td>
+<td ><input title = "Diameter of bit" id="BitDia" maxlength="8" name="textfield" size="10" type="text" value = "2.0"/></td>
+<td ></td>
+<td><button title = "Default settings for Whiteside 6210" class="LuaButton" style="width: 80%;" ID="BitXBtn" type=button>6210</button></td>
+</tr>
+<tr>
+<td >Spindle&nbsp;RPM</td>
+<td "><input title = "Spindle RPM" id="SpindleRPM" maxlength="8" name="textfield" size="10" type="text" value="14000" /></td>
+<td ></td>
+<td><button title = "Default settings for Whiteside 6220" class="LuaButton" style="width: 80%;" ID="BitYBtn" type=button>6220</button></td>
+</tr>
+<tr>
+<td >Stepover</td>
+<td ><input title = "Overlap between passes in a cut" id="Stepover" maxlength="8" name="textfield" size="10" type="text" value="1.0" /></td>
+<td ></td>
+<td><button title = "Default settings for Amana RC2255" class="LuaButton" style="width: 80%;" ID="BitZBtn" type=button>RC2255</button></td>
+</tr>
+<tr>
+<td ></td>
+<td colspan=3 align="left">
+  <input class="LuaButton"  id="StepoverType1" name="StepoverType" type="radio"/>Actual Value<br/> 
+  <input class="LuaButton"  id="StepoverType2" name="StepoverType" type="radio"/>Percent of Dia(%)
+</td>
+</tr>
+
+<tr>
+	<td colspan=4><hr width="100%"></td>
+</tr>
+<tr>
+	<td>Toolpath Type</td>
+</tr>
+  
+<tr>
+<td align="left" style="vertical-align:text-top" > 
+<input title = "Cuts up/down progressing left to right on each pass" id="ToolpathType1" checked="checked" name="ToolpathType" type="radio" onclick="ToolpathTypeOnChange()" /> Linear Y top/bottom<br/>
+<input title = "Cuts left/right progressing in front to back on each pass" id="ToolpathType2" name="ToolpathType" type="radio" onclick="ToolpathTypeOnChange()" /> Linear X left/right<br />
+<input title = "Similar to Linear Y but only cuts with climb cuts (front to back)" id="ToolpathType3" name="ToolpathType" type="radio" onclick="ToolpathTypeOnChange()" /> Climb only
+</td>
+<td colspan=2 style="vertical-align:text-top">
+<input title = "Cuts in a path round the perimeter progressing towards the center" id="ToolpathType4" name="ToolpathType" type="radio" onclick="ToolpathTypeOnChange()" /> Spiral<br/>
+<input title = "Cuts in a true spiral from outside to the center" id="ToolpathType5" name="ToolpathType" type="radio" onclick="ToolpathTypeOnChange()" /> True Spiral<br/>
+</td>
+<td align="center" style="vertical-align:middle; color:#2E2E30">
+<div id="ToolpathImage1" style="display:none"><!-- path-vertical-serpentine.svg as PNG --><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAYAAABV7bNHAAAE5UlEQVR4Aeycy28bVRTGz7VNifMA5AUbGimKjFSc2A1LBIhFNixKyoo/IBFCiFUXSAi1gISEWHbDBigRO7bhIZRdkZqKZTK2kyhYSnhsCiTQphjHj7mcb+xxryczc8chal3PHc2Ze8/5zlzP+flMEkvxJMhsoQQMoFA8RMcA5XK5M/l8/tzMzMzzhULhlTgYakXNqN3LqwfQ7OzsZDKZnBdCPM1jxps8rD5q7dQ8DwZqnV1A09PTjycSiTlOTNm2vc9JpWq1+mO9Xr85zIYaUStqRu1gABYcc/aEc+TD2NhYjgdqNpu3SqXSTcuydiuVyh/b29v7w2yoEbWiZq7/dzYaHx9/BiOsC4idJ9golUrtYYyjcRe5tTsswMABNDU1NYL2QoDtH7ZY7nx73e0U/kg2m30UcwcQ31YCDuzg4MDGGEdTa6/Vag4b5xBHGFFrNoA0pAyg0waUz5+/xHanUJiTYYYctktBrw+NbWDWCbrOvjtICPpQCDERtKAbR47gXNf3jtDEAK3jvT7X7xsQkRhzT9aPYblhmnflsNwwrZ91vLlt/wSA2ifiaFnrws+g9WN+ayDWzxrIxTl+Bu2k9r8AnfRFH6bzDCDNu2UAGUAaAhrZdJABpCGgkU0HGUAaAhrZdJABpCGgkU0HGUAaAhr5fnSQ5hIGWzaANO+PAWQAaQhoZNNBBpCGgEY2HWQAaQhoZNNBBpCGgEY2HWQAaQhoZNNBBpCGgEYezA7SXPT9lA0gDW0DyADSENDIpoMMIA0BjWw6yADSENDIpoPiCCifP/+O+i/KKgM1jjxV85sPZQcdHt6+KqW85VewG4OOPNcPGocS0N7eXk1K+oBCNujIC0lxpL4A5a5deEHOZ0i++iRhhO+sMoCHUmnjMyK5639pcret+6tqNBogSSL/xcX3UiJ5XeQnSEylOTBB8PPXFq4Q6+qiAzJvtVryXb9r6cRbfpo3lvAG/PzZ5YvPMYT3WUuyqXuShLhcWL7wrBp8AHPflyyXra+I5FqvKNfa8d5okBcJkCBaEOL4V8iJN9bOSEq+xlPfXf2toc59k0OC6rnqPOQUR7JtcdmZdA5evxMOHKICmgtcwRHkOWe4d/j33lQ7C8sN07wL++aWSuvXuYtW28lyte23vSjHSIAk0TqFbEKSR5dfUsTNtmk5OPV01pHSfltKWZc8Br+WvxIV0CdSykO/JaSku2Q3Plc1y9p40wr4oos3zu/oW+q56tw6pXWKvPEbscBDUV0/yjwSoNLiyq9E4iPy2QTZV6zXv//NRxqoULm80bnN+rusSICwZHFp5eOmbL0oSX7K/ipG+NbSN1fZH9o9MiAQ2Fz69kZx8es3rMWVl4s8wkd8mM0BNDIyYrtFZjIZJ+b6cRrV2l0mDoxKpXLEIBpsVKvV0hjjaNVqdbRTd6PDhBxACPJvqdsY0+n0JMY42ujoqFv73279XUBHR0c/IcigzuZyublsNvsY/DgYauWa8XHpKdRbr9cdFph3Ae3s7PzZaDQsBFOp1CTTfCkOT59CjaiVaz6L2pvN5gYeB4Q5rAsIztbW1s98H/7AH4MP4MfJbNveR+2bm5u/qHX3AILAP5zulMvlNcuyvuPb7Qa323A+garzZC3UiFrxgCXUDgaqHQOkiDb/af4X2m2YDTVyzd0/c3jes/8HAAD//0dPqOIAAAAGSURBVAMAZR6p3FyCe3oAAAAASUVORK5CYII=" width="72" height="72" alt="Linear Y"></div>
+<div id="ToolpathImage2" style="display:none"><!-- path-horizontal-serpentine.svg as PNG --><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAYAAABV7bNHAAAFMElEQVR4Aeycz28bRRTH39huiZ3wQxYncKQoMghs78ZIgIRaxKEHOKTJAf6ChIIQp3KlBYkC4siFAz+aiDsc0hYBN5DSCvFDssfrJAqW+BUhQRsDIXUd/9jteyuvazvOrsc/lM3urOZ59r2Z3Znvx7PO61TaAMjDloAEZIsHYB+gRCJxXFGUR5LJ5AlVVU/7wUgraSbtnbzaAKVSqclgMHiKMfYQ1tHOzl71SWtD8yli0KqzCWh6evreQCCQxo4hXde3sZNWKpW+q1Qq17xspJG0kmbSTgyIBcbMEjA/8WN8fDyBFdRqtb80TbvGOf+lUChc39jY2PaykUbSSppR/99oMDEx8SjVZE1A6NyHBqFQ6Feq/Wi4iiztJgtiYAKampoao+VFAbSbaL4s+HjtNoQfi8fjd9G5CQgfK0YOWbFY1Knux2KxWFhV06/3c60brmnVXi6XTTbmxxAmF8J04MVo9P4C3uttNM+UQQExBPO8qs7kAQIfI5UH0DxV+gaUTKZPKEr6ewTzGQB7GDx6CANSVTWlqjOXgkFYZQwe78YFf4cMt5mizOygne02X7uYEKBUamYWV0wGgJ2GI3Ywxu5mDC6ITlsIkKZlrwDoaQDjsuhA7ujPxkXnIQSIbo5Zp8Z5dq5eh5OGAT9SrNM4zzA3Wef8RHxhQNbN8/nM1Vwu8ySA/gKAsWnFvVb3DagBwsAV9Tnn2SSAfgZjf6J5qgwKyIJRQ1CfFIs34hg4h+aZMixAJpCtra1bnGfeMR2PfAwVkEeYtMkQBkTJFtqO2xJBu/m0KRZ0hAFRssUw6RIcxy3db4lORBgQgHiyBS45dB2WRafSB6A7Q+APsqsSQqf5aFrm1Tuz7+1sIEC9DXG0e0lADt+fBOQCQA5TcHezXEEO389AgOySM7e1UXKL9poDj33N/QASTrb2jXoIAUpuGYO3RIfuA5Dxqegg7ukvnuQKA+I8+wp32Y6h03wG+YKEAQ0y2FG8VgJy+NYkIAnIgYBDs1xBwwaEydZZNLmjeBBYTLYuMLmjeBAeiosnW3SVG8w7O4ojSkTljuIIlqn8K+YAVQKSgBwIODTLFTRKQG7bNbSbDyW3aHJH8aAFQcktkzuKB+Gx4uJJrvBvEJc7ihZtWRMB4RVEF/nJhAAlLs6eVJbmPlSX5r+imnyvw+oNkAFMWZp/I8SC3zBgLyGUZ6kmX7k4dx6wHWOeLIFeVKWW559CCG9i3yBaawkCY+fU5dnHWoOHcD6yIXsCxADmMIfo2hfbjhs/7P5kl6Qddtsg9LqK7rwhQkh3xtr86LE218WO8H+b9wTIAMiAzcGuV2xa3dM0sh1FBPSBYRj/d5NqGLALT0Qm+Yh2AYd535HtKGoLK38AsHehy8FAP8/PfLnVpckToZ4eMVKaW1x5r2bUnzbA+Aj9r6kmny9efh99z5aeARGBtcUrq7mFSy/zhZXncliTT3EvmwlobGxMt0RGo1EzZvl+qlu1W0xMGIVCYQ9BVNGgXC6HqfajlUqlSEN3tcEETEAUxL9S/1EdDocnqfajRSIRS/u/lv4moL29vZ8piKBiiUQiHY/H7yHfD0ZaUTP9c+lB0lupVEwWdN4EtLm5eaNarXIKhkKhSaT5jKr64w1UpBU1x0h7rVbL0uuA6JysCYic9fX13/A5/LZerxfJ95Ppur5N2tfW1n5v1d0GiBrwx2knn89f5Zx/gY/bKi43b76BqvFmLdJIWukFS6SdGLTaPkAtjXoul/uHlpuXjTSi5maag+dt5TYAAAD//6BP0tYAAAAGSURBVAMAOWTdCTnVvE8AAAAASUVORK5CYII=" width="72" height="72" alt="Linear X"></div>
+<div id="ToolpathImage3" style="display:none"><!-- path-climb-only.svg as PNG --><img src="data:image/png;base64,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" width="72" height="72" alt="Climb only"></div>
+<div id="ToolpathImage4" style="display:none"><!-- path-spiral.svg as PNG --><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAYAAABV7bNHAAAFT0lEQVR4Aeyc32/bVBTHz03CaJoWUDSBNFapqgqMNHYzeEKAhugLD2NDIPEHtCCEeNo7Y0NIiEdeeEErFX8ASOWHEC9ok8bEC9DepD8okSg/NGnQFihbmiapL+dYcWLnR22n/pXYlo+v77n2vef76XV7aluOQbQcSiACdCgegDZAmUzmmCRJp6ampp6UZfn5MBhpJc2kvZWXAVA2mx2Lx+MzjLGHsEy3HjyoddJa1zxDDPQ6G4AmJibujcViOTwwoSjKNh5UKJVK31UqlRuDbKSRtJJm0k4MiAX61DWmbnGTSqUyWECtVrtVKBRucM5/KRaLf62vr28PspFG0kqaUf+faDAyMvIolWQNQFi5Dw0SicQmlWE0nEWadpUFMVABjY+PD9H0IgfaHbRQrnh53a4Lv2tycvJu2lcB4WXFqEK2s7OjUBlG02svl8sqG3UTRhhWNUeATEhFgJwGJEnTF9B2ZTkn+skoZrQLJjzamm3PIMbgHcbYaFtPAXdQzAxjtxumbUAALGV3kOAcbz/2HgA15XK+xPrBmhHb3zsSIPvD9d8ZESCTn1kEKAJkQsCkOZpBfgCihAzNs2SSxkKznQSasFGbXZlBlJAxD5NJGov1kASqBEw2rgACX5JJ+0kgWFhcAtQc2e1EsjmSO3uuA3InbO96DRwgvNV5j3fyzUcKHKBkMrWRzcpzGHogYvMiCNRqfWWMPYA3z69IUu4HSTp9xvqZ7hwZOECaTMZgmjFxVZanP5Fl+aTm97r0DRAldmhtyWQ7APYiQOwnvHt56cSJx4fb2931+AYIZ4idO5ME5vLx47Vv6Bmeu0iMvfsGCOwlkyUAuLy1lXh2c3OzjPuerT4CamrUJ5NNr7YnPgVQHsFj3r5583sCpTV4UgYCUCelQsCyEOwZzpdf4pz/0ekYL3yBAySEuKUoyiv5/NJj+fyP17yAcNgYgQO0t3fn4UKBz2PQgXhHIHCAisXiLsIJzBo4QIEhUw8kAlQH0a2IAHUjU/dHgOoguhXBBNQtWh/8ESAT6BGgCJAJAZPmaAZFgEwImDQHYgbh3cKe33c00XfkZj8B7R05emMHTven9u4jIPGxGoFDG0WBBYe6MnTjGyC8EfY6d/Adx0Jh6Q2DMocqvgFyKH7Xu4kAmSC2BSgzf/YpMZMG8cL9QCXVTfrv+2ZrgAQw6aPzbyVY/CqTRoGNJ9ExClSX5s9dBGzvexJdBMS6+A3u7ML5JxDCJXTG0fRrHBh7U144e1rv9GHftSEtAWIA5/BJaMdjse2YgPjL3SI8ShLo1LndYrPi7yi69USEkGv1GevilLEOriRtLWP0UrUdlyVAAmAJDlmYgJZ2Z5NAcGjpJZm0CugDfKD3X6c4hYDboFSv6Ns4X3Y0CeQOJZS9JJOWABVmF38HYO9Ch4WBcpG/+pVvj4Y7hOSoyxIgGjE/t/heTRw8LUB8iPWvqaQ6n/v8fawP7GoZEBFYnfvien72s9f47OJzeSypTv5BNhXQ0NCQoolMp9OqT6uHqdRr15ioMPB5+D6CqKJBuVxOUhlGK5VK9CYbSa/WmYAKiDz4V+pfKpPJ5BiVYbTh4WFN+z+a/gag/f39n8mJoE5mMplc0F7optjcMtKKmunfpQdpjEqlorKg/QagjY2NrWq1ysmZSCTGkOYZWQ7HF6hIK2pWXzWu1WrL9Dkg4kDWAESVtbW1X/E6vHZwcLBD9TCZoijbpH11dfU3vW4DIGrAX067Kysr33LOv8TL7TpOt8H8AlX9y1qkkbTSB5ZIOzHQWxsgXaOSz+f/puk2yEYaUXMjzcF9w/o/AAAA///D7IX2AAAABklEQVQDAFpn2usTRU9oAAAAAElFTkSuQmCC" width="72" height="72" alt="Spiral"></div>
+<div id="ToolpathImage5" style="display:none"><!-- path-circular-spiral.svg as PNG --><img src="data:image/png;base64,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" width="72" height="72" alt="True Spiral"></div>
+</td>
+</tr>
+
+<tr>
+	<td colspan=4><hr width="100%"></td>
+</tr>
+
+<tr>
+ <td colspan=4 align="left" style="vertical-align:text-top">
+ <INPUT title = "Makes a climb cut around the parameter first to help avoid chipout" type="checkbox" ID="PerimeterCut">Perimeter cut first (applies to Linear X and Y only)
+ </td>
+</tr>
+
+<tr>
+ <td colspan=4 align="left" style="vertical-align:text-top">
+ <INPUT title = "Alternate tool between cuts to provide a forced pause" type="checkbox" checked ID="AltToolNumber" value='active'>Alternate tool number to force tool change stop
+ </td>
+</tr>
+<tr>
+<td align="right">Repeat</td>
+<td ><input title = "Number of time repeated a increasing depths" id="RepeatCount" maxlength="8" name="textfield" size="10" type="text" value="1" onchange = "RepeatOnChange()"/></td>
+<td align="right">Depth</td>
+<td><input title = "Total depth of all cuts" id="TotalDepth"  maxlength="8" name="textfield" size="10" type="text" value=".05" onchange = "TotalDepthOnChange()" /></td>
+<!-- 
+<td colspan=2>
+ <INPUT type="checkbox" checked ID="AutoInc" value='active'>Auto Increment
+</td>
+-->
+</tr>
+
+<tr>
+	<td colspan=4><hr width="100%"></td>
+	</tr>
+<tr>
+
+<tr>
+<td>Depth Offset</td>
+<td colspan=1 ><input title = "Depth of first cut" id="DepthOffset" maxlength="8" name="textfield" size="10" type="text" value="0.0" /></td>
+</tr>
+
+<tr>
+<td>Cut Depth</td>
+<td colspan=1 ><input title = "Depth of each cut" id="CutDepth" maxlength="8" name="textfield" size="10" type="text" value=".05" onchange = "CutDepthOnChange()"/></td>
+</tr>
+
+<tr>
+<td >Feedrate</td>
+<td ><input title = "Feed rate of x/y movement in IPM" id="FeedRate" maxlength="8" name="textfield" size="10" type="text" value="140" /></td>
+</tr>
+<tr>
+<td >Home Height</td>
+<td><input title = "Height above work piece bit will travel at start and end of program" id="HomeHeight" maxlength="8" name="textfield" size="10" type="text" value="1.0" /></td>
+</tr>
+
+</form>
+
+<!-- 
+####################################################################################
+#
+# Standard Vectric Gadget Apply / Close Footer 
+#
+#  use dialog:AddLabelField("GadgetVersion", g_version) in script to set version 
+#
+# you MUST have an ApplyButton handler in your code e.g .. 
+#
+# function OnLuaButton_ApplyButton(dialog)
+#
+#    ....
+#    return true  -- ESSENTIAL that handler has this at end (don't just return)
+# end
+#            
+# The following style should be added to your html to make any other button match style
+#
+#.LuaButton {
+#	font-weight: bold;
+#	width: 100%;
+#	font-family: Arial, Helvetica, sans-serif;
+#	font-size: 0.75rem;
+# }
+#
+#
+                                                                       
+#################################################################################### 
+
+-->
+
+<table border="0" bgcolor="#efefef" style="width: 100%; margin-left: 0px; margin-right: 0px; margin-top: 0px; font-family:'Lucida Sans Unicode', 'Lucida Grande', sans-serif;">
+
+    <tr>
+		<td colspan="5"><hr width="100%"></td>
+	</tr>
+	<tr>
+	    <td style="width: 20%"></td>
+		<td style="width: 20%">
+			<input  class="LuaButton" type="button"  style="font-weight: bold; width: 100%; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 0.75rem;"
+			   id="ApplyButton" 
+			   value="Apply"
+			   > 
+		</td>
+		<td style="width: 20%"></td>
+		<td style="width: 20%">
+			<input   class="FormButton" type="button" style="font-weight: bold; width: 100%; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 0.75rem;"
+			   id="ButtonCancel" 
+			   value="Close"
+			   >
+		</td>	
+		<td style="width: 20%"></td>
+	</tr>
+	<tr>
+		<td colspan="3" align="left" style="color: #999999; font-size: 0.62rem;" title="Licensed under the MIT License (see LICENSE.txt)">&copy; 2025-2026 Bill Florac</td>
+		<td colspan="2" align="right" style="color: #999999; font-size: 0.62rem;" >Version <span id="GadgetVersion">0.0</span></td>
+	</tr>
+
+</table>
+
+</body>
+</html>
