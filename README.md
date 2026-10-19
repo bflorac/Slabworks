@@ -21,13 +21,17 @@ SlabWorks builds the toolpaths directly from the job size, so you don't need to 
 
 ## Toolpath types
 
-| | Type | Path |
-|:---:|---|---|
-| <img src="icons/path-vertical-serpentine.svg" width="48" alt=""> | **Linear Y** | Back-and-forth passes along Y (front to back), stepping left to right, with a half-circle U-turn at each end. |
-| <img src="icons/path-horizontal-serpentine.svg" width="48" alt=""> | **Linear X** | Back-and-forth passes along X (left to right), stepping front to back, with half-circle U-turns. |
-| <img src="icons/path-climb-only.svg" width="48" alt=""> | **Climb only** | Every cut runs front to back as a climb cut. Between cuts, the bit returns around the left side of the slab, outside the material, then steps right. Slower, but gives the cleanest finish. |
-| <img src="icons/path-spiral.svg" width="48" alt=""> | **Spiral** | Follows the slab's edges clockwise and works inward, starting at the lower left. Corners are rounded where the stepover allows. |
-| <img src="icons/path-circular-spiral.svg" width="48" alt=""> | **True Spiral** | A continuous Archimedean spiral from the top center, clockwise, working inward. It's fitted inside the slab (dotted box), so the **corners are not cut**. Best for round slabs. |
+| Linear Y | Linear X | Climb only | Spiral | True Spiral |
+|:---:|:---:|:---:|:---:|:---:|
+| <img src="icons/path-vertical-serpentine.svg" width="64" alt="Linear Y"> | <img src="icons/path-horizontal-serpentine.svg" width="64" alt="Linear X"> | <img src="icons/path-climb-only.svg" width="64" alt="Climb only"> | <img src="icons/path-spiral.svg" width="64" alt="Spiral"> | <img src="icons/path-circular-spiral.svg" width="64" alt="True Spiral"> |
+
+| Type | Path |
+|---|---|
+| **Linear Y** | Back-and-forth passes along Y (front to back), stepping left to right, with a half-circle U-turn at each end. |
+| **Linear X** | Back-and-forth passes along X (left to right), stepping front to back, with half-circle U-turns. |
+| **Climb only** | Every cut runs front to back as a climb cut. Between cuts, the bit returns around the left side of the slab, outside the material, then steps right. Slower, but gives the cleanest finish. |
+| **Spiral** | Follows the slab's edges clockwise and works inward, starting at the lower left. Corners are rounded where the stepover allows. |
+| **True Spiral** | A continuous Archimedean spiral from the top center, clockwise, working inward. It's fitted inside the slab (dotted box), so the **corners are not cut**. Best for round slabs. |
 
 The green dot marks where each path starts. Every path starts and ends outside the material, so the bit plunges in clear air.
 
